@@ -1,3 +1,5 @@
+/* eslint-disable no-param-reassign */
+/* eslint-disable class-methods-use-this */
 import React, { Component } from 'react';
 
 export default class Calculator extends Component {
@@ -9,11 +11,6 @@ export default class Calculator extends Component {
       operator: '',
       index: 0,
     };
-
-    window.addEventListener('beforeunload', e => {
-      e.preventDefault();
-      e.returnValue = '';
-    });
   }
 
   componentDidMount() {
@@ -24,10 +21,21 @@ export default class Calculator extends Component {
       this.setState({ operator: localState.operator });
       this.setState({ index: localState.index });
     }
+
+    window.addEventListener('beforeunload', this.handleBeforeUnload);
   }
 
   componentDidUpdate() {
     localStorage.setItem('state', JSON.stringify(this.state));
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('beforeunload', this.handleBeforeUnload);
+  }
+
+  handleBeforeUnload(event) {
+    event.preventDefault();
+    event.returnValue = '';
   }
 
   handleClickDigit(digit) {
